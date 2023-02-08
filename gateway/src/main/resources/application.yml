@@ -1,15 +1,2 @@
-spring:
-  application:
-    name: api-gateway
-  profiles:
-    active: development
-  cloud:
-    config:
-      uri: http://${CONFIG_HOST:localhost}:8888
-      fail-fast: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+server:
+  port: 9030
