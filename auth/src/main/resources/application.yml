@@ -1,0 +1,19 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: auth-server
+  datasource:
+    password: admin
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/assessment
+    hikari:
+      idle-timeout: 10000
+      maximum-pool-size: 10
+      max-lifetime: 30000
+      minimum-idle: 5
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        ddl-auto : update
