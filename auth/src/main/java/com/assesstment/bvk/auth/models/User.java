@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "usrs")
+@Table(name = "usrs", schema = "public")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,7 @@ public class User {
     private String userPass;
 
     @Column(name = "created_by")
-    private Long createdBy;
+    private Integer createdBy;
 
     @Column(name = "created_date")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Jakarta")

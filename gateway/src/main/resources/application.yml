@@ -5,13 +5,23 @@ spring:
   application:
     name: api-gateway
   cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/llawliet1945/assessment-bvk-config-server.git
-          skipSslValidation: true
-          clone-on-start: true
-          timeout: 10
-          default-label: main
-          ignore-local-ssh-settings: false
-          refresh-rate: 300
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      default-filters:
+        - name: CostumFilter
+      routes:
+        - id: auth-server
+          uri: lb://auth-server
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1

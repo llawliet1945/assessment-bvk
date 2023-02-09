@@ -33,13 +33,13 @@ public class CostumFilter extends AbstractGatewayFilterFactory<CostumFilter.Conf
                 final String token = this.getAuthHeader(request);
                 try {
                     if (this.isAuthMissing(request)) {
-                        return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+                        return this.onError(exchange, "Auth header is missing in request", HttpStatus.UNAUTHORIZED);
                     }
                     if (jwtUtil.isInvalid(token)){
-                        return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+                        return this.onError(exchange, "Auth header is invalid", HttpStatus.UNAUTHORIZED);
                     }
                 }catch (Exception e){
-                    return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+                    return this.onError(exchange, "Auth header is invalid", HttpStatus.UNAUTHORIZED);
                 }
                 this.populateRequestWithHeaders(exchange, token);
             }
@@ -62,20 +62,18 @@ public class CostumFilter extends AbstractGatewayFilterFactory<CostumFilter.Conf
     }
 
     private String getAuthHeader(ServerHttpRequest request) {
-        return request.getHeaders().getOrEmpty("Authorization").get(0);
+        return request.getHeaders().getOrEmpty("Auth").get(0);
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
-        return !request.getHeaders().containsKey("Authorization");
+        return !request.getHeaders().containsKey("Auth");
     }
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
         Claims claims = jwtUtil.getAllClaimsFromToken(token);
         System.out.println(String.valueOf(claims.get("userId")));
-        System.out.println(String.valueOf(claims.get("userCompId")));
         exchange.getRequest().mutate()
-                .header("userId", String.valueOf(claims.get("userId")))
-                .header("userCompId", String.valueOf(claims.get("userCompId")))
-                .build();
+            .header("userId", String.valueOf(claims.get("userId")))
+            .build();
     }
 }

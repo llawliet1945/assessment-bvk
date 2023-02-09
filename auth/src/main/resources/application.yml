@@ -23,9 +23,7 @@ spring:
       maximum-pool-size: 10
       max-lifetime: 30000
       minimum-idle: 5
+      connection-timeout: 20000
   jpa:
-    properties:
-      hibernate:
-        format_sql: 'true'
-        ddl-auto : update
+    show-sql: true
 

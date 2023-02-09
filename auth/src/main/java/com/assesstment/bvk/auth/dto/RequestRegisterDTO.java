@@ -21,4 +21,8 @@ public class RequestRegisterDTO {
     @NotNull
     @Size(min = 4)
     private String userPass;
+
+    @NotNull
+    @Size(min = 4)
+    private String userConfirmPass;
 }
