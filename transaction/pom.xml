@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.assessment-bvk</groupId>
-	<artifactId>user</artifactId>
+	<artifactId>transaction</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>user</name>
+	<name>transaction</name>
 	<description>Assessment Buana Varia Komputama</description>
 	<properties>
 		<java.version>11</java.version>
@@ -38,6 +38,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

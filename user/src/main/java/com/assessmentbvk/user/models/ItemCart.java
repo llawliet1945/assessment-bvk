@@ -10,31 +10,24 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "itms", schema = "public")
-public class Item {
-
+@Table(name = "itms_cart", schema = "public")
+public class ItemCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial", name = "itms_id")
+    @Column(columnDefinition = "serial", name = "itms_cart_id")
+    private Integer itemCartId;
+
+    @Column(name = "itms_cart_uuid")
+    private String itemCartUuid;
+
+    @Column(name = "itms_id")
     private Integer itemId;
 
-    @Column(name = "itms_uuid")
-    private String itemUuid;
-
-    @Column(name = "itms_cat_id")
-    private Integer itemCatId;
-
-    @Column(name = "itms_name")
-    private String itemName;
-
-    @Column(name = "itms_img")
-    private String itemImage;
+    @Column(name = "cart_id")
+    private Integer cartId;
 
     @Column(name = "itms_qty")
     private Integer itemQty;
-
-    @Column(name = "itms_price")
-    private Integer itemPrice;
 
     @Column(name = "isdel")
     private Integer isdel;
@@ -52,5 +45,4 @@ public class Item {
     @Column(name = "updated_date")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Jakarta")
     private Date updatedDate;
-
 }

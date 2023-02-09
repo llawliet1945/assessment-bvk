@@ -12,6 +12,7 @@
         <module name="user" />
         <module name="gateway" />
         <module name="discovery" />
+        <module name="transaction" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +20,7 @@
       <module name="config" target="11" />
       <module name="discovery" target="11" />
       <module name="gateway" target="11" />
+      <module name="transaction" target="11" />
       <module name="user" target="11" />
     </bytecodeTargetLevel>
   </component>
@@ -28,6 +30,7 @@
       <module name="config" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="transaction" options="-parameters" />
       <module name="user" options="-parameters" />
     </option>
   </component>
