@@ -29,7 +29,7 @@ public class CategoryService {
     private ModelMapper modelMapper;
 
     public ResponseEntity<String> listCategory() throws JsonProcessingException {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findByIsdel(0);
         if (categories.isEmpty()) {
             return GenerateResponse.notFound("Category not found", null);
         }
@@ -38,7 +38,7 @@ public class CategoryService {
     }
 
     public ResponseEntity<String> detailCategory(String categoryUuid) throws JsonProcessingException {
-        Optional<Category> category = categoryRepository.findByCategoryUuid(categoryUuid);
+        Optional<Category> category = categoryRepository.findByCategoryUuidAndIsdel(categoryUuid, 0);
         if (category.isEmpty()) {
             return GenerateResponse.notFound("Category not found", null);
         }
@@ -57,7 +57,7 @@ public class CategoryService {
     }
 
     public ResponseEntity<String> updateCategory(Integer userId, String categoryUuid, RequestCategory request) throws JsonProcessingException {
-        Optional<Category> category = categoryRepository.findByCategoryUuid(categoryUuid);
+        Optional<Category> category = categoryRepository.findByCategoryUuidAndIsdel(categoryUuid, 0);
         if (category.isEmpty()) {
             return GenerateResponse.notFound("Category not found", null);
         }
@@ -66,6 +66,7 @@ public class CategoryService {
         cat.setCategoryUuid(category.get().getCategoryUuid());
         cat.setCreatedBy(category.get().getCreatedBy());
         cat.setCreatedDate(category.get().getCreatedDate());
+        cat.setIsdel(category.get().getIsdel());
         cat.setUpdatedBy(userId);
         cat.setUpdatedDate(new Date());
         categoryRepository.save(cat);
@@ -73,7 +74,7 @@ public class CategoryService {
     }
 
     public ResponseEntity<String> deleteCategory(String categoryUuid) throws JsonProcessingException {
-        Optional<Category> category = categoryRepository.findByCategoryUuid(categoryUuid);
+        Optional<Category> category = categoryRepository.findByCategoryUuidAndIsdel(categoryUuid, 0);
         if (category.isEmpty()) {
             return GenerateResponse.notFound("Category not found", null);
         }
