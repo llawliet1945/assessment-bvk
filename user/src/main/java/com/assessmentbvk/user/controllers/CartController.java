@@ -22,7 +22,7 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @GetMapping(value = "/add")
+    @PostMapping(value = "/add")
     public ResponseEntity<String> addCart(@RequestHeader(name = "userId") String userId, @RequestBody RequestItemCart request) throws JsonProcessingException {
         return cartService.addCart(Integer.parseInt(userId), request);
     }
@@ -32,7 +32,7 @@ public class CartController {
         return cartService.detailCart(Integer.parseInt(userId));
     }
 
-    @DeleteMapping(value = "/delete/{categoryUuid}")
+    @DeleteMapping(value = "/delete/{cartUuid}/{itemUuid}")
     public ResponseEntity<String> deleteItem(
         @RequestHeader(name = "userId") String userId, @PathVariable String cartUuid, @PathVariable String itemUuid) throws JsonProcessingException {
         return cartService.deleteItemOnCart(Integer.parseInt(userId), cartUuid, itemUuid);

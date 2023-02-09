@@ -40,6 +40,7 @@ public class CartService {
             if (checkCart.isEmpty()) {
                 Cart cart = new Cart();
                 cart.setCartUuid(UUID.randomUUID().toString());
+                cart.setIsdel(0);
                 cart.setCreatedBy(userId);
                 cart.setCreatedDate(new Date());
                 cartRepository.save(cart);
@@ -47,6 +48,7 @@ public class CartService {
                 for (int x = 0; x < request.getItem().size(); x++ ) {
                     ItemCart itemCart = new ItemCart();
                     itemCart.setCartId(cart.getCartId());
+                    itemCart.setItemCartUuid(UUID.randomUUID().toString());
                     Optional<Item> item = itemRepository.findByItemUuidAndIsdel(request.getItem().get(x).getItemUuid(), 0);
                     if (item.isEmpty()) {
                         return GenerateResponse.notFound("Item not found", null);
@@ -56,6 +58,8 @@ public class CartService {
                     }
                     itemCart.setItemId(item.get().getItemId());
                     itemCart.setItemQty(request.getItem().get(x).getItemQty());
+                    itemCart.setCreatedBy(userId);
+                    itemCart.setCreatedDate(new Date());
                     itemCartRepository.save(itemCart);
                 }
                 return GenerateResponse.success("Add new cart success", null);
@@ -74,12 +78,16 @@ public class CartService {
                         itemCart.setCartId(checkCart.get().getCartId());
                         itemCart.setItemId(item.get().getItemId());
                         itemCart.setItemQty(request.getItem().get(x).getItemQty());
+                        itemCart.setCreatedBy(userId);
+                        itemCart.setCreatedDate(new Date());
                         itemCartRepository.save(itemCart);
                     } else {
                         if ((checkItem.get().getItemQty() + request.getItem().get(x).getItemQty()) > item.get().getItemQty()) {
                             return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
                         }
                         checkItem.get().setItemQty(checkItem.get().getItemQty() + request.getItem().get(x).getItemQty());
+                        checkItem.get().setUpdatedBy(userId);
+                        checkItem.get().setUpdatedDate(new Date());
                         itemCartRepository.save(checkItem.get());
                     }
                 }
