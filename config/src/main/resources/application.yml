@@ -12,8 +12,6 @@ spring:
           skipSslValidation: true
           clone-on-start: true
           timeout: 10
-          username: llawliet1945
-          password: 180699aa
           default-label: main
           ignore-local-ssh-settings: false
           refresh-rate: 300
