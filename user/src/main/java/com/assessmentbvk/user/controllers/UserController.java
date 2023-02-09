@@ -1,5 +1,6 @@
 package com.assessmentbvk.user.controllers;
 
+import com.assessmentbvk.user.dto.RequestUpdateUser;
 import com.assessmentbvk.user.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class UserController {
     @GetMapping(value = "/detail")
     public ResponseEntity<String> login(@RequestHeader(name = "userId") String userId) throws JsonProcessingException {
         return userService.detailUser(Integer.parseInt(userId));
+    }
+
+    @PutMapping(value = "/update")
+    public ResponseEntity<String> update(@RequestHeader(name = "userId") String userId, @RequestBody RequestUpdateUser request) throws JsonProcessingException {
+        return userService.update(Integer.parseInt(userId), request);
     }
 
 }

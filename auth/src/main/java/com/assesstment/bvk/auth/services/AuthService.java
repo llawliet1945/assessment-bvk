@@ -57,9 +57,16 @@ public class AuthService {
             User user = modelMapper.map(request, User.class);
             user.setUserPass(encoder.encode(request.getUserPass()));
             user.setUserUuid(UUID.randomUUID().toString());
-            user.setCreatedBy(user.getUserId());
             user.setCreatedDate(new Date());
+            user.setUserStatus("ACTIVE");
             userRepository.save(user);
+            userRepository.flush();
+
+            //update created by
+            user.setCreatedBy(user.getUserId());
+            userRepository.save(user);
+            userRepository.flush();
+
             return GenerateResponse.success("Register success", null);
         } catch (Exception e) {
             e.printStackTrace();
