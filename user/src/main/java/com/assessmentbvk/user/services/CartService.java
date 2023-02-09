@@ -58,6 +58,7 @@ public class CartService {
                     }
                     itemCart.setItemId(item.get().getItemId());
                     itemCart.setItemQty(request.getItem().get(x).getItemQty());
+                    itemCart.setIsdel(0);
                     itemCart.setCreatedBy(userId);
                     itemCart.setCreatedDate(new Date());
                     itemCartRepository.save(itemCart);
@@ -75,9 +76,11 @@ public class CartService {
                     Optional<ItemCart> checkItem = itemCartRepository.findByItemIdAndCartIdAndIsdel(item.get().getItemId(), checkCart.get().getCartId(), 0);
                     if (checkItem.isEmpty()) {
                         ItemCart itemCart = new ItemCart();
+                        itemCart.setItemCartUuid(UUID.randomUUID().toString());
                         itemCart.setCartId(checkCart.get().getCartId());
                         itemCart.setItemId(item.get().getItemId());
                         itemCart.setItemQty(request.getItem().get(x).getItemQty());
+                        itemCart.setIsdel(0);
                         itemCart.setCreatedBy(userId);
                         itemCart.setCreatedDate(new Date());
                         itemCartRepository.save(itemCart);
