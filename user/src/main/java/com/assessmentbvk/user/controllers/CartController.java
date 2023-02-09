@@ -33,7 +33,7 @@ public class CartController {
     }
 
     @DeleteMapping(value = "/delete/{cartUuid}/{itemUuid}")
-    public ResponseEntity<String> deleteItem(
+    public ResponseEntity<String> deleteItemOnCart(
         @RequestHeader(name = "userId") String userId, @PathVariable String cartUuid, @PathVariable String itemUuid) throws JsonProcessingException {
         return cartService.deleteItemOnCart(Integer.parseInt(userId), cartUuid, itemUuid);
     }
