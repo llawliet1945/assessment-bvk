@@ -25,3 +25,15 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: user-server
+          uri: lb://user-server
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+        - id: transaction-server
+          uri: lb://transaction-server
+          predicates:
+            - Path=/transaction/**
+          filters:
+            - StripPrefix=1
