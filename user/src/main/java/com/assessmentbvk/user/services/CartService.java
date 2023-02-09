@@ -46,9 +46,6 @@ public class CartService {
                 cartRepository.save(cart);
 
                 for (int x = 0; x < request.getItem().size(); x++ ) {
-                    ItemCart itemCart = new ItemCart();
-                    itemCart.setCartId(cart.getCartId());
-                    itemCart.setItemCartUuid(UUID.randomUUID().toString());
                     Optional<Item> item = itemRepository.findByItemUuidAndIsdel(request.getItem().get(x).getItemUuid(), 0);
                     if (item.isEmpty()) {
                         return GenerateResponse.notFound("Item not found", null);
@@ -56,12 +53,7 @@ public class CartService {
                     if (item.get().getItemQty() < request.getItem().get(x).getItemQty()) {
                         return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
                     }
-                    itemCart.setItemId(item.get().getItemId());
-                    itemCart.setItemQty(request.getItem().get(x).getItemQty());
-                    itemCart.setIsdel(0);
-                    itemCart.setCreatedBy(userId);
-                    itemCart.setCreatedDate(new Date());
-                    itemCartRepository.save(itemCart);
+                    generateItemCart(checkCart.get(), item.get(), request.getItem().get(x).getItemQty(), userId);
                 }
                 return GenerateResponse.success("Add new cart success", null);
             } else {
@@ -75,15 +67,7 @@ public class CartService {
                     }
                     Optional<ItemCart> checkItem = itemCartRepository.findByItemIdAndCartIdAndIsdel(item.get().getItemId(), checkCart.get().getCartId(), 0);
                     if (checkItem.isEmpty()) {
-                        ItemCart itemCart = new ItemCart();
-                        itemCart.setItemCartUuid(UUID.randomUUID().toString());
-                        itemCart.setCartId(checkCart.get().getCartId());
-                        itemCart.setItemId(item.get().getItemId());
-                        itemCart.setItemQty(request.getItem().get(x).getItemQty());
-                        itemCart.setIsdel(0);
-                        itemCart.setCreatedBy(userId);
-                        itemCart.setCreatedDate(new Date());
-                        itemCartRepository.save(itemCart);
+                        generateItemCart(checkCart.get(), item.get(), request.getItem().get(x).getItemQty(), userId);
                     } else {
                         if ((checkItem.get().getItemQty() + request.getItem().get(x).getItemQty()) > item.get().getItemQty()) {
                             return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
@@ -118,6 +102,18 @@ public class CartService {
         itemCart.get().setIsdel(1);
         itemCartRepository.save(itemCart.get());
         return GenerateResponse.success("Delete item from cart success", null);
+    }
+
+    private void generateItemCart(Cart cart, Item item, Integer itemQty, Integer userId) {
+        ItemCart itemCart = new ItemCart();
+        itemCart.setItemCartUuid(UUID.randomUUID().toString());
+        itemCart.setCartId(cart.getCartId());
+        itemCart.setItemId(item.getItemId());
+        itemCart.setItemQty(itemQty);
+        itemCart.setIsdel(0);
+        itemCart.setCreatedBy(userId);
+        itemCart.setCreatedDate(new Date());
+        itemCartRepository.save(itemCart);
     }
 
 }
