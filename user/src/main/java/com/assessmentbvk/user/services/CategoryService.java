@@ -61,15 +61,10 @@ public class CategoryService {
         if (category.isEmpty()) {
             return GenerateResponse.notFound("Category not found", null);
         }
-        Category cat = modelMapper.map(request, Category.class);
-        cat.setCategoryId(category.get().getCategoryId());
-        cat.setCategoryUuid(category.get().getCategoryUuid());
-        cat.setCreatedBy(category.get().getCreatedBy());
-        cat.setCreatedDate(category.get().getCreatedDate());
-        cat.setIsdel(category.get().getIsdel());
-        cat.setUpdatedBy(userId);
-        cat.setUpdatedDate(new Date());
-        categoryRepository.save(cat);
+        category.get().setCategoryName(request.getCategoryName());
+        category.get().setUpdatedBy(userId);
+        category.get().setUpdatedDate(new Date());
+        categoryRepository.save(category.get());
         return GenerateResponse.success("Update category success", null);
     }
 

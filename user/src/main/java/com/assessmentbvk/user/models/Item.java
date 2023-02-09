@@ -22,10 +22,13 @@ public class Item {
     private String itemUuid;
 
     @Column(name = "itms_cat_id")
-    private String itemCatId;
+    private Integer itemCatId;
 
     @Column(name = "itms_name")
     private String itemName;
+
+    @Column(name = "itms_img")
+    private String itemImage;
 
     @Column(name = "itms_qty")
     private Integer itemQty;
