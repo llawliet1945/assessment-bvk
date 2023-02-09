@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: user-server
+  profiles:
+    active: development
+  cloud:
+    config:
+      uri: http://${CONFIG_HOST:localhost}:8888
+      fail-fast: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
