@@ -2,6 +2,7 @@ package com.assessmentbvk.user.services;
 
 import com.assessmentbvk.user.dto.ListItemCart;
 import com.assessmentbvk.user.dto.RequestItemCart;
+import com.assessmentbvk.user.dto.ResponseFinalItemCart;
 import com.assessmentbvk.user.models.Cart;
 import com.assessmentbvk.user.models.Item;
 import com.assessmentbvk.user.models.ItemCart;
@@ -15,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -51,7 +49,7 @@ public class CartService {
                         return GenerateResponse.notFound("Item not found", null);
                     }
                     if (item.get().getItemQty() < request.getItem().get(x).getItemQty()) {
-                        return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
+                        return GenerateResponse.badRequest("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
                     }
                     generateItemCart(checkCart.get(), item.get(), request.getItem().get(x).getItemQty(), userId);
                 }
@@ -63,14 +61,14 @@ public class CartService {
                         return GenerateResponse.notFound("Item not found", null);
                     }
                     if (item.get().getItemQty() < request.getItem().get(x).getItemQty()) {
-                        return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
+                        return GenerateResponse.badRequest("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
                     }
                     Optional<ItemCart> checkItem = itemCartRepository.findByItemIdAndCartIdAndIsdel(item.get().getItemId(), checkCart.get().getCartId(), 0);
                     if (checkItem.isEmpty()) {
                         generateItemCart(checkCart.get(), item.get(), request.getItem().get(x).getItemQty(), userId);
                     } else {
                         if ((checkItem.get().getItemQty() + request.getItem().get(x).getItemQty()) > item.get().getItemQty()) {
-                            return GenerateResponse.notFound("Item not enough, Quantity Item : " + item.get().getItemQty() , null);
+                            return GenerateResponse.badRequest("Item not enough, Quantity Item : " + item.get().getItemQty(), null);
                         }
                         checkItem.get().setItemQty(checkItem.get().getItemQty() + request.getItem().get(x).getItemQty());
                         checkItem.get().setUpdatedBy(userId);
@@ -102,6 +100,59 @@ public class CartService {
         itemCart.get().setIsdel(1);
         itemCartRepository.save(itemCart.get());
         return GenerateResponse.success("Delete item from cart success", null);
+    }
+
+    public ResponseEntity<String> reduceItemOnCart(Integer userId, String cartUuid, String itemUuid, Integer amount) throws JsonProcessingException {
+        Optional<ItemCart> itemCart = itemCartRepository.findByItemUuidAndCartUuidAndIsdel(itemUuid, cartUuid, 0);
+        if (itemCart.isEmpty()) {
+            return GenerateResponse.notFound("Item not found in this cart", null);
+        }
+        if (itemCart.get().getItemQty() < amount) {
+            return GenerateResponse.badRequest("Item not enough, Quantity Item : " + itemCart.get().getItemQty(), null);
+        } else {
+            if (itemCart.get().getItemQty() > amount) {
+                itemCart.get().setItemQty(itemCart.get().getItemQty() - amount);
+                itemCart.get().setUpdatedBy(userId);
+                itemCart.get().setUpdatedDate(new Date());
+                itemCartRepository.save(itemCart.get());
+                return GenerateResponse.success("Reduce item from cart success", null);
+            } else {
+                itemCart.get().setIsdel(1);
+                itemCartRepository.save(itemCart.get());
+                return GenerateResponse.success("Delete item from cart success", null);
+            }
+        }
+    }
+
+    public ResponseEntity<String> calculateItemOnCart(Integer userId, RequestItemCart request) throws JsonProcessingException {
+        Optional<Cart> cart = cartRepository.findByCreatedByAndIsdel(userId, 0);
+        if (cart.isEmpty()) {
+            return GenerateResponse.notFound("Cart not found", null);
+        }
+        if (request.getItem().size() < 1) {
+            return GenerateResponse.badRequest("Please select item", null);
+        }
+        HashMap finalCart = new HashMap<>();
+        Integer price = 0;
+        List<ResponseFinalItemCart> items = new ArrayList<>();
+        for ( int x = 0; x < request.getItem().size(); x++ ){
+            ResponseFinalItemCart tempItem = new ResponseFinalItemCart();
+            Optional<Item> item = itemRepository.findByItemUuidAndIsdel(request.getItem().get(x).getItemUuid(), 0);
+            if (item.isEmpty()) {
+                return GenerateResponse.notFound("Item not found", null);
+            }
+            Integer tempPrice = request.getItem().get(x).getItemQty() * item.get().getItemPrice();
+            tempItem.setItemName(item.get().getItemName());
+            tempItem.setItemUuid(item.get().getItemUuid());
+            tempItem.setItemPrice(item.get().getItemPrice());
+            tempItem.setItemQty(request.getItem().get(x).getItemQty());
+            tempItem.setItemTotalPrice(tempPrice);
+            items.add(tempItem);
+            price += tempPrice;
+        }
+        finalCart.put("items", items);
+        finalCart.put("totalPrices", price);
+        return GenerateResponse.success("Success calculate items", finalCart);
     }
 
     private void generateItemCart(Cart cart, Item item, Integer itemQty, Integer userId) {
