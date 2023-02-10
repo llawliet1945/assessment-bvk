@@ -4,9 +4,11 @@ import com.assessmentbvk.user.dto.ListItemCart;
 import com.assessmentbvk.user.dto.RequestItemCart;
 import com.assessmentbvk.user.dto.ResponseFinalItemCart;
 import com.assessmentbvk.user.models.Cart;
+import com.assessmentbvk.user.models.Discount;
 import com.assessmentbvk.user.models.Item;
 import com.assessmentbvk.user.models.ItemCart;
 import com.assessmentbvk.user.repositories.CartRepository;
+import com.assessmentbvk.user.repositories.DiscountRepository;
 import com.assessmentbvk.user.repositories.ItemCartRepository;
 import com.assessmentbvk.user.repositories.ItemRepository;
 import com.assessmentbvk.user.utility.GenerateResponse;
@@ -30,6 +32,9 @@ public class CartService {
 
     @Autowired
     private ItemCartRepository itemCartRepository;
+
+    @Autowired
+    private DiscountRepository discountRepository;
 
     @Transactional
     public ResponseEntity<String> addCart(Integer userId, RequestItemCart request) throws JsonProcessingException {
@@ -124,7 +129,7 @@ public class CartService {
         }
     }
 
-    public ResponseEntity<String> calculateItemOnCart(Integer userId, RequestItemCart request) throws JsonProcessingException {
+    public ResponseEntity<String> calculateItemOnCart(Integer userId, RequestItemCart request, String disc) throws JsonProcessingException {
         Optional<Cart> cart = cartRepository.findByCreatedByAndIsdel(userId, 0);
         if (cart.isEmpty()) {
             return GenerateResponse.notFound("Cart not found", null);
@@ -149,6 +154,20 @@ public class CartService {
             tempItem.setItemTotalPrice(tempPrice);
             items.add(tempItem);
             price += tempPrice;
+        }
+        if ( !disc.equals("") ) {
+            Optional<Discount> discount = discountRepository.findByDiscountCodeAndIsdel(disc, 0);
+            if (discount.isEmpty()) {
+                return GenerateResponse.badRequest("Discount code was invalid", null);
+            }
+            if (discount.get().getDiscountQty() < 1) {
+                return GenerateResponse.badRequest("Discount amount not enough", null);
+            } else {
+                finalCart.put("discountRate", discount.get().getDiscountRate()+"%");
+                Integer discPrice = (price * discount.get().getDiscountRate() / 100);
+                finalCart.put("discountPrice", discPrice > discount.get().getDiscountMaxRate() ? discount.get().getDiscountMaxRate() : discPrice);
+                finalCart.put("summaryPrice", discPrice > discount.get().getDiscountMaxRate() ? price - discount.get().getDiscountMaxRate() : price - discPrice);
+            }
         }
         finalCart.put("items", items);
         finalCart.put("totalPrices", price);

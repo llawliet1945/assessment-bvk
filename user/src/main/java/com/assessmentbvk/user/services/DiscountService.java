@@ -34,7 +34,7 @@ public class DiscountService {
             Discount discount = mapper.map(request, Discount.class);
             discount.setDiscountUuid(UUID.randomUUID().toString());
             Date now = new Date();
-            Calendar calendar = null;
+            Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
             calendar.add(Calendar.DAY_OF_WEEK, request.getDiscountExpDate());
             discount.setDiscountExpDate(calendar.getTime());
@@ -58,7 +58,7 @@ public class DiscountService {
         checkDiscount.get().setDiscountDesc(request.getDiscountDesc());
         checkDiscount.get().setDiscountQty(request.getDiscountQty());
         checkDiscount.get().setDiscountRate(request.getDiscountRate());
-        Calendar calendar = null;
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(checkDiscount.get().getCreatedDate());
         calendar.add(Calendar.DAY_OF_WEEK, request.getDiscountExpDate());
         checkDiscount.get().setDiscountExpDate(calendar.getTime());

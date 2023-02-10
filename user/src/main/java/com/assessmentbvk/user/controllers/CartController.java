@@ -42,8 +42,10 @@ public class CartController {
     }
 
     @PostMapping(value = "/calculate")
-    public ResponseEntity<String> calculateItemOnCart(@RequestHeader(name = "userId") String userId, @RequestBody RequestItemCart request) throws JsonProcessingException {
-        return cartService.calculateItemOnCart(Integer.parseInt(userId), request);
+    public ResponseEntity<String> calculateItemOnCart(@RequestHeader(name = "userId") String userId,
+        @RequestBody RequestItemCart request,
+        @RequestParam(defaultValue = "", required = false, name = "disc") String disc) throws JsonProcessingException {
+        return cartService.calculateItemOnCart(Integer.parseInt(userId), request, disc);
     }
 
 }
